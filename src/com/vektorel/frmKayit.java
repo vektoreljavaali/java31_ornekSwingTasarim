@@ -6,11 +6,21 @@
 package com.vektorel;
 
 import com.models.tblmusteri;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
+
 
 /**
  *
@@ -18,15 +28,99 @@ import javax.swing.table.TableModel;
  */
 public class frmKayit extends javax.swing.JFrame {
 
+    
+    
      //Müşteri Listesi 
         List<tblmusteri> musterilistesi = new ArrayList<tblmusteri>();
+    // Seçilen Kayıt id al
+        public static int secilenid;
+        public static int kayitdurumu =0;
     /**
      * Creates new form frmKayit
      */
     public frmKayit() {
         initComponents();
+    
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+         
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                handleClosing();
+            }
+        });
+        
+        
+        
+        
+        //bu kodlama tablonun değiştirilmesini engelliyor.
+        jTable2.setDefaultEditor(Object.class, null);
+        tblmusteri tmp = new tblmusteri();
+        tmp.setAdi("Muhammet");
+        tmp.setSoyadi("Hoca");
+        tmp.setTelefonu("23423423");
+        tmp.setAdresi("sfsdfdfsdfsdfsdf");
+        musterilistesi.add(tmp);
+         tmp = new tblmusteri();
+        tmp.setAdi("Kemal");
+        tmp.setSoyadi("Hoca");
+        tmp.setTelefonu("23423423");
+        tmp.setAdresi("sfsdfdfsdfsdfsdf");
+        musterilistesi.add(tmp);
+         tmp = new tblmusteri();
+        tmp.setAdi("Nuran");
+        tmp.setSoyadi("Hoca");
+        tmp.setTelefonu("23423423");
+        tmp.setAdresi("sfsdfdfsdfsdfsdf");
+        musterilistesi.add(tmp);
+                tmp = new tblmusteri();
+        tmp.setAdi("Burçin");
+        tmp.setSoyadi("Hoca");
+        tmp.setTelefonu("23423423");
+        tmp.setAdresi("sfsdfdfsdfsdfsdf");
+        musterilistesi.add(tmp);
+        tabloyukle();
     }
 
+     private void handleClosing() {
+        if (kayitdurumu==1) {
+            int answer = showWarningMessage();
+             
+            switch (answer) {
+                case JOptionPane.YES_OPTION:
+                    System.out.println("Save and Quit");
+                    dispose();
+                    break;
+                     
+                case JOptionPane.NO_OPTION:
+                    System.out.println("Don't Save and Quit");
+                    dispose();
+                    break;
+                     
+                case JOptionPane.CANCEL_OPTION:
+                    System.out.println("Don't Quit");
+                    break;
+            }
+        } else {
+            dispose();
+        }      
+    }
+    
+     private int showWarningMessage() {
+        String[] buttonLabels = new String[] {"Evet", "Hayır", "İptal"};
+        String defaultOption = buttonLabels[0];
+        Icon icon = null;
+         
+        return JOptionPane.showOptionDialog(this,
+                "Kayıt işlemini tamamlamadınız.\n" +
+                "Kayıt Yapalım mı?",
+                "UYARI",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                icon,
+                buttonLabels,
+                defaultOption);    
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -36,6 +130,9 @@ public class frmKayit extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        menuSil = new javax.swing.JMenuItem();
+        MenuDuzenle = new javax.swing.JMenuItem();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -45,89 +142,500 @@ public class frmKayit extends javax.swing.JFrame {
         txtad = new javax.swing.JTextField();
         txtsotyad = new javax.swing.JTextField();
         txttel = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnkaydet = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
+        btniptal = new javax.swing.JButton();
+        btnguncelle = new javax.swing.JButton();
+        btnyenikayit = new javax.swing.JButton();
+        txtarama = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        txtaramasoyad = new javax.swing.JTextField();
+        txtaramatelefon = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+
+        menuSil.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Delet.png"))); // NOI18N
+        menuSil.setText("Kaydı Sil");
+        menuSil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSilActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(menuSil);
+
+        MenuDuzenle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Edit.png"))); // NOI18N
+        MenuDuzenle.setText("Kaydı Düzenle");
+        MenuDuzenle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuDuzenleActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(MenuDuzenle);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setText("Ad");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 21, -1, -1));
+        jLabel1.setText("Ad*");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
-        jLabel2.setText("Soyad2");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
+        jLabel2.setText("Soyad*");
+        jLabel2.setToolTipText("");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, -1, 20));
 
-        jLabel3.setText("Telefon");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
+        jLabel3.setText("Telefon*");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
 
         jLabel4.setText("Adres");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 40, -1, 20));
 
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(100, 66));
+
+        txtadres.setEditable(false);
+        txtadres.setBackground(new java.awt.Color(153, 153, 153));
         txtadres.setColumns(20);
         txtadres.setRows(5);
         jScrollPane1.setViewportView(txtadres);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 206, 100));
-        getContentPane().add(txtad, new org.netbeans.lib.awtextra.AbsoluteConstraints(62, 21, 146, -1));
-        getContentPane().add(txtsotyad, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 60, 146, -1));
-        getContentPane().add(txttel, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, 146, -1));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(306, 40, 190, 140));
 
-        jButton1.setText("EKLE");
+        txtad.setEditable(false);
+        txtad.setBackground(new java.awt.Color(153, 153, 153));
+        getContentPane().add(txtad, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 146, -1));
+
+        txtsotyad.setEditable(false);
+        txtsotyad.setBackground(new java.awt.Color(153, 153, 153));
+        getContentPane().add(txtsotyad, new org.netbeans.lib.awtextra.AbsoluteConstraints(306, 10, 190, -1));
+
+        txttel.setEditable(false);
+        txttel.setBackground(new java.awt.Color(153, 153, 153));
+        getContentPane().add(txttel, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 40, 146, -1));
+
+        btnkaydet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Save-icon.png"))); // NOI18N
+        btnkaydet.setText("Kaydet");
+        btnkaydet.setEnabled(false);
+        btnkaydet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnkaydetActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnkaydet, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 70, 140, 60));
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null}
+            },
+            new String [] {
+                "Müşteri Adı", "Müşteri Soyadı", "Müşteri Telefonu", "Müşteri Adresi"
+            }
+        ));
+        jTable2.setComponentPopupMenu(jPopupMenu1);
+        jTable2.setDragEnabled(true);
+        jScrollPane3.setViewportView(jTable2);
+
+        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 520, 270));
+
+        btniptal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/images.jpg"))); // NOI18N
+        btniptal.setText("İptal");
+        btniptal.setEnabled(false);
+        btniptal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btniptalActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btniptal, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 130, 140, 60));
+
+        btnguncelle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Edit_1.png"))); // NOI18N
+        btnguncelle.setText("Güncelle");
+        btnguncelle.setEnabled(false);
+        btnguncelle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnguncelleActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnguncelle, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 150, 60));
+
+        btnyenikayit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/New.png"))); // NOI18N
+        btnyenikayit.setText("Yeni Kayıt");
+        btnyenikayit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnyenikayitActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnyenikayit, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 150, 60));
+
+        txtarama.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtaramaKeyPressed(evt);
+            }
+        });
+        getContentPane().add(txtarama, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 210, 130, -1));
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/find-user-male.fw2.fw.png"))); // NOI18N
+        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 250, -1, 33));
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 200, 25, 25));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        txtaramasoyad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtaramasoyadKeyPressed(evt);
             }
-        ));
-        jScrollPane3.setViewportView(jTable2);
+        });
+        getContentPane().add(txtaramasoyad, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 210, 130, -1));
 
-        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 295, 258, 250));
+        txtaramatelefon.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtaramatelefonKeyPressed(evt);
+            }
+        });
+        getContentPane().add(txtaramatelefon, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 210, 130, -1));
+
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/resim.png"))); // NOI18N
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, 180, 170));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnkaydetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnkaydetActionPerformed
+        //pojo dan nesne türettim
+
+    if(txtad.getText().trim().equals("")||
+       txtsotyad.getText().trim().equals("")||
+       txttel.getText().trim().equals("")    
+            )
+    {
+    JOptionPane.showMessageDialog(null, "Gerekli Alanları Doldurmadan Kayıt işlemi Yapılamaz");
+    
+    }
+    else{
+    tblmusteri musteri = new tblmusteri();
+    musteri.setAdi(txtad.getText());
+    musteri.setSoyadi(txtsotyad.getText());
+    musteri.setAdresi(txtadres.getText());
+    musteri.setTelefonu(txttel.getText());
+    musterilistesi.add(musteri);
+    tabloyukle();
+    temizle();
+    btnyenikayit.setEnabled(true);
+    btnkaydet.setEnabled(false);
+    btniptal.setEnabled(false);
+    txtkapat();
+    kayitdurumu=0;
+    }
+    
+           
+    }//GEN-LAST:event_btnkaydetActionPerformed
+
+    private void btniptalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btniptalActionPerformed
+    temizle();
+    btnyenikayit.setEnabled(true);
+    btnkaydet.setEnabled(false);
+    btnguncelle.setEnabled(false);
+    btniptal.setEnabled(false);
+txtkapat();
+kayitdurumu=0;
+    }//GEN-LAST:event_btniptalActionPerformed
+
+    private void menuSilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSilActionPerformed
+      int reply = JOptionPane.showConfirmDialog(null, "İlgili Kaydı silmek istiyor musunuz?",
+              "UYARI", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+            
+        int secilen = jTable2.getSelectedRow();
+        satirsil(secilen);
+        tabloyukle();
+        
+        }
+        else {
+           JOptionPane.showMessageDialog(null, "İşlem İptal Edilmiştir.");
+           
+        }
+        
+        
+    }//GEN-LAST:event_menuSilActionPerformed
+
+    private void MenuDuzenleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuDuzenleActionPerformed
+       int secilen = jTable2.getSelectedRow();
+        secilenid = secilen;
+        txtad.setText(jTable2.getValueAt(secilen, 0).toString());
+        txtadres.setText(jTable2.getValueAt(secilen, 3).toString());
+        txtsotyad.setText(jTable2.getValueAt(secilen, 1).toString());
+        txttel.setText(jTable2.getValueAt(secilen, 2).toString());
+        btnyenikayit.setEnabled(false);
+        btnguncelle.setEnabled(true);
+        btniptal.setEnabled(true);  
+        txtac();
+        kayitdurumu=1;
+        
+    }//GEN-LAST:event_MenuDuzenleActionPerformed
+
+    private void btnguncelleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnguncelleActionPerformed
+       
+        tblmusteri tmp = new tblmusteri();
+        tmp.setAdi(txtad.getText());
+        tmp.setAdresi(txtadres.getText());
+        tmp.setSoyadi(txtsotyad.getText());
+        tmp.setTelefonu(txttel.getText());
+        musterilistesi.set(secilenid, tmp);
+       tabloyukle();
+       temizle();
+        btnyenikayit.setEnabled(true);
+        btnguncelle.setEnabled(false);
+        btniptal.setEnabled(false);
+       txtkapat();
+        kayitdurumu=0;
+                
+    }//GEN-LAST:event_btnguncelleActionPerformed
+
+    
+    public  void txtkapat(){
+    txtad.setEditable(false);
+    txtadres.setEditable(false);
+    txtsotyad.setEditable(false);
+    txttel.setEditable(false);
+      txtadres.setBackground(new java.awt.Color(153, 153, 153));
+      txtad.setBackground(new java.awt.Color(153, 153, 153));
+      txtsotyad.setBackground(new java.awt.Color(153, 153, 153));
+      txttel.setBackground(new java.awt.Color(153, 153, 153));
+      
+    }
+    
+    public void txtac(){
+    txtad.setEditable(true);
+    txtadres.setEditable(true);
+    txtsotyad.setEditable(true);
+    txttel.setEditable(true);
+    txtad.requestFocus();
+     txtadres.setBackground(new java.awt.Color(255, 255, 255));
+      txtad.setBackground(new java.awt.Color(255, 255, 255));
+      txtsotyad.setBackground(new java.awt.Color(255, 255, 255));
+      txttel.setBackground(new java.awt.Color(255, 255, 255));
+    
+    }
+    
+    
+    private void btnyenikayitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnyenikayitActionPerformed
+        btnyenikayit.setEnabled(false);
+        btnkaydet.setEnabled(true);
+        btniptal.setEnabled(true);
+        txtac();
+        kayitdurumu =1;
+    }//GEN-LAST:event_btnyenikayitActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        JOptionPane.showMessageDialog(null, "tuş basıldı");
+    }//GEN-LAST:event_formKeyPressed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
        
-       
-        //pojo dan nesne türettim
-        tblmusteri musteri = new tblmusteri();
-        musteri.setAdi(txtad.getText());
-        musteri.setSoyadi(txtsotyad.getText());
-        musteri.setAdresi(txtadres.getText());
-        musteri.setTelefonu(txttel.getText());
-        
-        
-        musterilistesi.add(musteri);
-      
-       
-        //Modelide Table aktarıyoruz.
-     int i =0;
+       int i =0;
+       tablotemizle();
        for(tblmusteri mst: musterilistesi){
-       
+        
+           if(mst.getAdi().toUpperCase().contains(txtarama.getText().toUpperCase()))
+           {
+        satirekle();
         jTable2.setValueAt(mst.getAdi(),0+i ,0 );
         jTable2.setValueAt(mst.getSoyadi(),0+i ,1 );
         jTable2.setValueAt(mst.getTelefonu(),0+i ,2 );
         jTable2.setValueAt(mst.getAdresi(),0+i ,3 );
-           i++;    
-        
+        i++;    
+       
+           }
+           
+       
        }
-        
-              
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void txtaramaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtaramaKeyPressed
+        aramaislemi(txtarama.getText());
+    }//GEN-LAST:event_txtaramaKeyPressed
+
+    private void txtaramasoyadKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtaramasoyadKeyPressed
+        soyadaramaislemi(txtaramasoyad.getText());
+    }//GEN-LAST:event_txtaramasoyadKeyPressed
+
+    private void txtaramatelefonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtaramatelefonKeyPressed
+        telefonaramaislemi(txtaramatelefon.getText());
+    }//GEN-LAST:event_txtaramatelefonKeyPressed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+       
+      
+    }//GEN-LAST:event_formWindowClosing
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+      
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+       //String dosyaadi = fileChooser.getSelectedFile().getName();
+       //stem.out.println(fileChooser.getSelectedFile().getAbsolutePath());
+       //  File dosya = fileChooser.getSelectedFile();
+       File islem = new File("images\\"+fileChooser.getSelectedFile().getName());
+       ///   islem.compareTo(dosya.getAbsoluteFile());
+          ///  System.out.println("dosyanın yolu...:"+ islem.getAbsolutePath());
+              
+        String dosya = fileChooser.getSelectedFile().getAbsolutePath();
+            try {
+                Files.copy(fileChooser.getSelectedFile().toPath(), islem.toPath());
+            } catch (IOException ex) {
+                Logger.getLogger(frmKayit.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+        ///    System.out.println(dosya);
+        jLabel5.setIcon(new javax.swing.ImageIcon(dosya));
+     }
+        
+       
+    }//GEN-LAST:event_jLabel5MouseClicked
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+       
+    }//GEN-LAST:event_formWindowClosed
+
+    
+    
+    public void telefonaramaislemi(String ifade){
+      int i =0;
+       tablotemizle();
+       for(tblmusteri mst: musterilistesi){
+        
+        if(mst.getTelefonu().toUpperCase().contains(ifade.toUpperCase()))
+           {
+        satirekle();
+        jTable2.setValueAt(mst.getAdi(),0+i ,0 );
+        jTable2.setValueAt(mst.getSoyadi(),0+i ,1 );
+        jTable2.setValueAt(mst.getTelefonu(),0+i ,2 );
+        jTable2.setValueAt(mst.getAdresi(),0+i ,3 );
+        i++;    
+       
+           }
+           
+       
+       }
+    }
+   
+    
+    public void soyadaramaislemi(String ifade){
+      int i =0;
+       tablotemizle();
+       for(tblmusteri mst: musterilistesi){
+        
+        if(mst.getSoyadi().toUpperCase().contains(ifade.toUpperCase()))
+           {
+        satirekle();
+        jTable2.setValueAt(mst.getAdi(),0+i ,0 );
+        jTable2.setValueAt(mst.getSoyadi(),0+i ,1 );
+        jTable2.setValueAt(mst.getTelefonu(),0+i ,2 );
+        jTable2.setValueAt(mst.getAdresi(),0+i ,3 );
+        i++;    
+       
+           }
+           
+       
+       }
+    }
+   
+    
+    public void aramaislemi(String ifade){
+      int i =0;
+       tablotemizle();
+       for(tblmusteri mst: musterilistesi){
+        
+        if(mst.getAdi().toUpperCase().contains(ifade.toUpperCase()))
+           {
+        satirekle();
+        jTable2.setValueAt(mst.getAdi(),0+i ,0 );
+        jTable2.setValueAt(mst.getSoyadi(),0+i ,1 );
+        jTable2.setValueAt(mst.getTelefonu(),0+i ,2 );
+        jTable2.setValueAt(mst.getAdresi(),0+i ,3 );
+        i++;    
+       
+           }
+           
+       
+       }
+    }
+    
+    public void temizle(){
+    
+        txtad.setText("");
+        txtadres.setText("");
+        txtsotyad.setText("");
+        txttel.setText("");
+    
+    }
+    
+    public void satirsil(int id){
+        try {
+             musterilistesi.remove(id);
+               JOptionPane.showMessageDialog(null, "Kayıt Başırı ile silinmiştir.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "HATA!! Boş kayıt Silme İşlemi Yapamazsınız.");
+        }
+    
+   
+    
+    }
+    
+    public void tabloyukle(){
+        int i =0;
+        tablotemizle();
+       for(tblmusteri mst: musterilistesi){
+        satirekle();
+        jTable2.setValueAt(mst.getAdi(),0+i ,0 );
+        jTable2.setValueAt(mst.getSoyadi(),0+i ,1 );
+        jTable2.setValueAt(mst.getTelefonu(),0+i ,2 );
+        jTable2.setValueAt(mst.getAdresi(),0+i ,3 );
+        i++;    
+       
+       }
+    }
+    
+    public void satirekle(){
+            DefaultTableModel dmt = (DefaultTableModel)this.jTable2.getModel();
+            dmt.setRowCount(dmt.getRowCount()+1);
+            this.jTable2.repaint();
+  }
+    
+    public void tablotemizle(){
+     DefaultTableModel dmt = (DefaultTableModel)this.jTable2.getModel();
+     dmt.getDataVector().removeAllElements();
+      this.jTable2.repaint();
+    }
+    
+    
+    
+    
+    
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -164,16 +672,27 @@ public class frmKayit extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MenuDuzenle;
+    private javax.swing.JButton btnguncelle;
+    private javax.swing.JButton btniptal;
+    private javax.swing.JButton btnkaydet;
+    private javax.swing.JButton btnyenikayit;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable2;
+    private javax.swing.JMenuItem menuSil;
     private javax.swing.JTextField txtad;
     private javax.swing.JTextArea txtadres;
+    private javax.swing.JTextField txtarama;
+    private javax.swing.JTextField txtaramasoyad;
+    private javax.swing.JTextField txtaramatelefon;
     private javax.swing.JTextField txtsotyad;
     private javax.swing.JTextField txttel;
     // End of variables declaration//GEN-END:variables
